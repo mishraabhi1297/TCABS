@@ -1,0 +1,231 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TCABS</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jq-3.2.1/jszip-2.5.0/dt-1.10.16/b-1.5.1/b-colvis-1.5.1/b-flash-1.5.1/b-html5-1.5.1/b-print-1.5.1/cr-1.4.1/kt-2.3.2/r-2.2.1/rg-1.0.2/rr-1.2.3/sc-1.4.4/sl-1.2.5/datatables.min.css" />
+    <link rel="stylesheet" href="~/css/tcabs.css" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
+        <a class="navbar-brand navbar-center" asp-area="" asp-controller="Home" asp-action="Index">
+            <img src="/images/logo.png" width="30" height="30" alt="">
+            <span class="ml-3 lead">TCABS</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarToggle">
+            <ul class="navbar-nav d-md-none">
+                @if (User.IsInRole("ADMIN"))
+                {
+                    <li class="h4 navbar-text">Admin</li>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_ACCESS_ROLE_LIST")).Succeeded)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="ViewRoles">Access Roles</a>
+                    </li>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_EMPLOYEE_LIST")).Succeeded)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="ViewEmployees">Employee Accounts</a>
+                    </li>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_STUDENT_LIST")).Succeeded)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="ViewStudents">Student Accounts</a>
+                    </li>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_UNIT_LIST")).Succeeded)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="ViewUnits">Units</a>
+                    </li>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_UNIT_OFFERING_LIST")).Succeeded)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="ViewUnitOfferings">Unit Offerings</a>
+                    </li>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_STUDY_PERIOD_LIST")).Succeeded)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="ViewStudyPeriods">Study Periods</a>
+                    </li>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_ENROLMENT_LIST")).Succeeded)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="ViewEnrolments">Enrolments</a>
+                    </li>
+                }
+                @if (User.IsInRole("CONVENOR"))
+                {
+                    <li class="h4 navbar-text">Convenor</li>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_PROJECT_LIST")).Succeeded)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Project" asp-action="ViewProjects">Project List</a>
+                    </li>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_PROJECT_ROLE_GROUP_LIST")).Succeeded)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Project" asp-action="ViewProjectRoleGroups">Project Groups</a>
+                    </li>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_TEAM_LIST")).Succeeded)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Team" asp-action="ViewTeams">Teams</a>
+                    </li>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_FORM_LIST")).Succeeded)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="ViewFormOffering">Peer Review Forms</a>
+                    </li>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_REPORTS")).Succeeded)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Report" asp-action="Report_Home">Reports</a>
+                    </li>
+                }
+            </ul>
+            @await Html.PartialAsync("_UserPartial")
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-none d-md-block sidebar bg-dark">
+                <div class="sidebar-sticky bg-dark navbar-dark">
+                    <ul class="navbar-nav flex-column bg-dark navbar-dark">
+                        @if (User.IsInRole("ADMIN"))
+                        {
+                            <li class="text-center h3 navbar-text">Admin</li>
+                        }
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_ACCESS_ROLE_LIST")).Succeeded)
+                        {
+                            <li class="ml-4 nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="ViewRoles">Access Roles</a>
+                            </li>
+                        }
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_EMPLOYEE_LIST")).Succeeded)
+                        {
+                            <li class="ml-4 nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="ViewEmployees">Employee Accounts</a>
+                            </li>
+                        }
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_STUDENT_LIST")).Succeeded)
+                        {
+                            <li class="ml-4 nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="ViewStudents">Student Accounts</a>
+                            </li>
+                        }
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_UNIT_LIST")).Succeeded)
+                        {
+                            <li class="ml-4 nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="ViewUnits">Units</a>
+                            </li>
+                        }
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_UNIT_OFFERING_LIST")).Succeeded)
+                        {
+                            <li class="ml-4 nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="ViewUnitOfferings">Unit Offerings</a>
+                            </li>
+                        }
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_STUDY_PERIOD_LIST")).Succeeded)
+                        {
+                            <li class="ml-4 nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="ViewStudyPeriods">Study Periods</a>
+                            </li>
+                        }
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_ENROLMENT_LIST")).Succeeded)
+                        {
+                            <li class="ml-4 nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="ViewEnrolments">Enrolments</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("CONVENOR"))
+                        {
+                            <li class="text-center h3 navbar-text">Convenor</li>
+                        }
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_PROJECT_LIST")).Succeeded)
+                        {
+                            <li class="ml-4 nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Project" asp-action="ViewProjects">Project List</a>
+                            </li>
+                        }
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_PROJECT_ROLE_GROUP_LIST")).Succeeded)
+                        {
+                            <li class="ml-4 nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Project" asp-action="ViewProjectRoleGroups">Project Groups</a>
+                            </li>
+                        }
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_TEAM_LIST")).Succeeded)
+                        {
+                            <li class="ml-4 nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Team" asp-action="ViewTeams">Teams</a>
+                            </li>
+                        }
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_FORM_LIST")).Succeeded)
+                        {
+                            <li class="ml-4 nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="ViewFormOffering">Peer Review Forms</a>
+                            </li>
+                        }
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_REPORTS")).Succeeded)
+                        {
+                            <li class="ml-4 nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Report" asp-action="Report_Home">Reports</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </nav>
+            <main role="main" class="col-md-10 ml-sm-auto pt-4 px-4">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.bootstrap4.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.colVis.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/colreorder/1.4.1/js/dataTables.colReorder.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/keytable/2.3.2/js/dataTables.keyTable.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.1/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.1/js/responsive.bootstrap4.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/rowgroup/1.0.2/js/dataTables.rowGroup.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/rowreorder/1.2.3/js/dataTables.rowReorder.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/scroller/1.4.4/js/dataTables.scroller.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/select/1.2.5/js/dataTables.select.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

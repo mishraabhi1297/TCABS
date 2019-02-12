@@ -1,0 +1,10 @@
+﻿@model TCABS.Data.Models.Entities.UnitAssociation
+
+@if (@Model == null)
+{
+    <a class="nav-link" asp-controller="Home" asp-action="SelectUnit">Select a Unit</a>
+}
+else
+{
+    <a class="nav-link" asp-controller="Home" asp-action="SelectUnit">@Model.UnitName (@Model.UnitCode)</a>
+}

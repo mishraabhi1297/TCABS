@@ -1,0 +1,72 @@
+﻿@using TCABS.Data.Models.Admin
+@using TCABS.Data.Models.AdminViewModels
+@model TCABS.Data.Models.Admin.UserViewModel
+
+<h1>Edit Employee User</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="EditEmployee">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
+            <div class="row">
+                <div class="form-group col-6">
+                    <label asp-for="FirstName"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-6">
+                    <label asp-for="LastName"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateOfBirth"></label>
+                <input asp-for="DateOfBirth" class="form-control" />
+                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UniqueID"></label>
+                <input asp-for="UniqueID" class="form-control" />
+                <span asp-validation-for="UniqueID" class="text-danger"></span>
+            </div>
+            <label>Role</label>
+            <div class="form-group">
+                @foreach (var role in Model.Roles)
+                {
+                    if (role.Name.ToUpper() != "STUDENT")
+                    {
+                        <div class="form-check form-check-inline">
+                            <input id="role@(role.ID)"
+                                   type="checkbox"
+                                   class="form-check-input"
+                                   name="SelectedRoles"
+                                   value="@role.ID"
+                                   @(Model.SelectedRoles.Contains(role.ID) ? "checked" : "") />
+                            <label for="@(role.ID)" class="form-check-label">@(role.Name)</label>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="form-group">
+                <a class="btn btn-secondary" asp-action="ViewEmployees">Cancel</a>
+                <input type="submit" value="Confirm Changes" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

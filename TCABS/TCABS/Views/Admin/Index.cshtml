@@ -1,0 +1,13 @@
+﻿@inject IAuthorizationService AuthorizationService
+@using Microsoft.AspNetCore.Authorization
+@using TCABS.Data.Models.Entities
+@model IEnumerable<IdentityRole>
+
+@{
+    ViewData["Title"] = "Admin Portal";
+}
+
+<h2>@ViewData["Title"]</h2>
+<div>
+    <p>This is the TCABS Admin Portal. Select an action from the menu on the left.</p>
+</div>

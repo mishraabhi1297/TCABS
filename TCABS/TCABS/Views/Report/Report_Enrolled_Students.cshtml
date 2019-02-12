@@ -1,0 +1,168 @@
+﻿@inject IAuthorizationService AuthorizationService
+@using Microsoft.AspNetCore.Authorization
+@using TCABS.Data.Models.Entities
+@model IEnumerable<TCABS.Data.Models.Report_Student>
+@{
+    ViewData["Title"] = "Enrolled Students";
+}
+<h1>Enrolled Students</h1>
+<a asp-area="" class="btn btn-outline-primary" asp-controller="Report" asp-action="Report_Home" aria-label="Previous">&laquo; Report Home</a>
+
+<br />
+<br />
+<table class="table responsive nowrap" id="reportTable" style="width:100%">
+    <thead>
+        <tr>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Student_ID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Student_Name)
+            </th>
+            <th >
+                @Html.DisplayNameFor(model => model.Unit_Name)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Student_ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Student_Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Unit_Name)
+            </td>
+
+        </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <th class="filter-input">
+            </th>
+            <th class="filter-input">
+            </th>
+            <th>
+            </th>
+        </tr>
+    </tfoot>
+</table>
+
+@section Scripts
+    {
+    <script>
+
+        var searchValue = document.location.href.split('?').pop();
+        var value = searchValue.split('=').pop();
+        var table = $(document).ready(function () {
+            $('#reportTable .filter-input').each(function () {
+
+                $(this).html('<input class="form-control" type="text" placeholder="Search" />');
+            });
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                $($.fn.dataTable.tables(true)).DataTable()
+                    .columns.adjust()
+                    .fixedColumns().relayout();
+            });
+
+            $('#reportTable').DataTable({
+
+                "dom": '<"d-flex justify-content-between"<lfr><B>>rt<"bottom"ip><"clear">',
+                "responsive": true,
+                select: true,
+                "buttons": [
+                    {
+                        extend: 'collection',
+                        text: 'Select',
+                        buttons: [
+                            'selectAll',
+                            'selectNone',
+                            'selectRows'
+                        ]
+                    },
+                    {
+                        extend: 'collection',
+                        text: 'Export',
+                        buttons: [
+                            {
+                                extend: 'pdfHtml5',
+                                text: 'Download PDF',
+                                exportOptions: {
+                                    columns: ':visible:not(.not-export-col)'
+                                }
+                            },
+                            {
+                                extend: 'csvHtml5',
+                                text: 'Download CSV',
+                                exportOptions: {
+                                    columns: ':visible:not(.not-export-col)'
+                                }
+                            },
+                            {
+                                extend: 'excelHtml5',
+                                text: 'Download Excel',
+                                exportOptions: {
+                                    columns: ':visible:not(.not-export-col)'
+                                }
+                            },
+
+                            {
+                                extend: 'print',
+                                text: 'Print Report',
+                                exportOptions: {
+                                    columns: ':visible:not(.not-export-col)'
+                                }
+                            }]
+                    },
+                    {
+                        "extend": 'colvis',
+                        "columns": ':not(.notToggleVis)',
+                        "postfixButtons": ['colvisRestore']
+                    }
+
+                ],
+
+                "order": [[0, 'asc']],
+
+                initComplete: function () {
+                    this.api().columns('.filter-select').every(function () {
+                        var column = this;
+                        var select = $('<select class="form-control"><option value=""></option></select>')
+                            .appendTo($(column.footer()).empty())
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d + '">' + d + '</option>')
+                        });
+                    });
+                    this.api().columns().every(function () {
+                        var that = this;
+
+                        $('input', this.footer()).on('keyup change', function () {
+                            if (that.search() !== this.value) {
+                                that
+                                    .search(this.value)
+                                    .draw();
+                            }
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+}

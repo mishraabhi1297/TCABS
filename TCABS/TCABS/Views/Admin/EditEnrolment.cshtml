@@ -1,0 +1,28 @@
+﻿@model TCABS.Data.Models.Entities.Enrolment
+
+<h4>Edit Enrolment</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditEnrolment">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Enrolment_ID" />
+            <div class="form-group">
+                <label class="control-label">Student</label>
+                @Html.DropDownListFor(model => model.Student_ID, new SelectList(Model.Student_List, "Student_ID", "Student_Name", Model.Student_ID), "Select Student", new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                <label class="control-label">Unit Offering</label>
+                @Html.DropDownListFor(model => model.UnitOffering_ID, new SelectList(Model.UnitOffering_List, "UnitOffering_ID", "Unit_Name", Model.UnitOffering_ID), "Select UnitOffering", new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                <a class="btn btn-danger" asp-action="ViewEnrolments">Cancel</a>
+                <input type="submit" value="Confirm Changes" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

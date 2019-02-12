@@ -1,0 +1,39 @@
+﻿@model TCABS.Data.Models.Entities.Project
+
+<h4>Project</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="EditProject">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Project_ID" />
+            <div class="form-group">
+                <label asp-for="Project_NAME"></label>
+                <input asp-for="Project_NAME" class="form-control" />
+                <span asp-validation-for="Project_NAME" class="text-danger"></span>
+            </div>
+            <div class="row form-group">
+                <div class="col-6">
+                    <label for="@Model.ProjectRoleGroup_ID">Project Group</label>
+                    @Html.DropDownListFor(model => model.ProjectRoleGroup_ID,
+                        new SelectList(Model.ProjectRoleGroupList, "ProjectRoleGroup_ID", "ProjectRoleGroup_TYPE"),
+                        "Select Project Group",
+                        new {@class = "form-control"})
+                </div>
+                <div class="col-6">
+                    <label asp-for="Project_BUDGET"></label>
+                    <input asp-for="Project_BUDGET" class="form-control" />
+                    <span asp-validation-for="Project_BUDGET" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <a class="btn btn-secondary" asp-action="ViewProjects">Cancel</a>
+                <input type="submit" value="Save Changes" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

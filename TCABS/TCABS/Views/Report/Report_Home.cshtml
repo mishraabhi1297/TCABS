@@ -1,0 +1,39 @@
+﻿@inject IAuthorizationService AuthorizationService
+@using Microsoft.AspNetCore.Authorization
+
+@{
+    ViewData["Title"] = "Report Selection";
+}
+<h1>Report Selection</h1>
+<div class="row">
+    <div class="col-4">
+        <a class="btn btn-block btn-primary" asp-area="" asp-controller="Report" asp-action="Report_Team_Weekly">Team Weekly Report</a>
+        <br/>
+        <a class="btn btn-block btn-primary" asp-area="" asp-controller="Report" asp-action="Report_Budget_Weekly">Team Budget Report</a>
+        <br/>
+        <a class="btn btn-block btn-primary" asp-area="" asp-controller="Report" asp-action="Report_Registered_Convenors">List of registered convenors and units of study</a>
+        <br/>
+        <a class="btn btn-block btn-primary" asp-area="" asp-controller="Report" asp-action="Report_Enrolled_Students">List of students enrolled in a unit of study</a>
+        <br/>
+        <a class="btn btn-block btn-primary" asp-area="" asp-controller="Report" asp-action="Report_Supervisor">List of registered supervisors</a>
+        <br/>
+        <a class="btn btn-block btn-primary" asp-area="" asp-controller="Report" asp-action="Report_All_Projects">List of registered projects</a>
+        <br/>
+        <a class="btn btn-block btn-primary" asp-area="" asp-controller="Report" asp-action="Report_Registered_Teams">List of registered teams of students</a>
+        <br/>
+        <a class="btn btn-block btn-primary disabled" asp-area="" asp-controller="Report" asp-action="Report_Home">Attendees for Supervisor meetings</a>
+        <br/>
+        <a class="btn btn-block btn-primary" asp-area="" asp-controller="Report" asp-action="Report_Project_Budget">Project Budget</a>
+        <br/>
+        <a class="btn btn-block btn-primary" asp-area="" asp-controller="Report" asp-action="Report_Summary_Student_Teams">Summary of Students</a>
+        <br/>
+        <a class="btn btn-block btn-primary" asp-area="" asp-controller="Report" asp-action="Report_Unit_Overview">Unit Overview</a>
+        <br/>
+        <a class="btn btn-block btn-primary disabled" asp-area="" asp-controller="Report" asp-action="Report_Home">Meeting summary</a>
+    </div>
+
+</div>
+
+
+
+

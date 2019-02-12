@@ -1,0 +1,26 @@
+﻿@using Microsoft.AspNetCore.Http
+@model IEnumerable<TCABS.Data.Models.Entities.UnitAssociation>
+
+@if (Model.Any() && Model != null)
+{
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="unitDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            @if (Context.Session.GetInt32("SELECTED_UNIT") != null
+                 && Context.Session.GetInt32("SELECTED_UNIT") != 0)
+            {
+            <span>Select a Unit NOT NULL OR 0</span>
+            <!--await Component.InvokeAsync("UnitSelected", Context.Session.GetInt32("SELECTED_UNIT"))-->
+            }
+            else
+            {
+                <span>Select a Unit</span>
+            }
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="unitDropdown">
+            @foreach (var unit in Model)
+            {
+                <a asp-controller="Home" asp-action="UnitSelected" asp-route-id="@unit.UnitOfferingID" class="dropdown-item">@unit.UnitName (@unit.UnitCode)</a>
+            }
+        </div>
+    </li>
+}

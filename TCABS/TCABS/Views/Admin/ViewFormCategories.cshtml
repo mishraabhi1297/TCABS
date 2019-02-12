@@ -1,0 +1,31 @@
+﻿@inject IAuthorizationService AuthorizationService
+@using Microsoft.AspNetCore.Authorization
+@using TCABS.Data.Models.Admin
+@model IEnumerable<FormCategoryViewModel>
+
+<p>
+    <!-- replace below line with 'Create Form Offering'-->
+    <a class="btn btn-primary" asp-action="CreateProjectRoleGroup">View Form Offerings</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Category_Type)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category_Type)
+            </td>
+            <td>
+                <a class="btn btn-primary" asp-action="ViewFormQuestions" asp-route-id="@item.Category_ID">View Questions</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

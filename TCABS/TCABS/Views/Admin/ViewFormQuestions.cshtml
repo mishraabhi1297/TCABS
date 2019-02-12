@@ -1,0 +1,49 @@
+﻿@inject IAuthorizationService AuthorizationService
+@using Microsoft.AspNetCore.Authorization
+@using TCABS.Data.Models.Admin
+@model IEnumerable<FormQuestionViewModel>
+
+<p>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Category_Type)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Question_Text)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category_Type)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Question_Text)
+                </td>
+                {
+                <!-- Replace below line with asp-action ViewFormOffering asp-route-type@item.FormOffering_id
+                <a class="btn btn-primary" asp-action="ViewProjects" asp-route-type="<and symbol here>item.ProjectRoleGroup_TYPE">View Projects in Group</a>
+                }
+                                @if ((await AuthorizationService.AuthorizeAsync(User, "DELETE_PROJECT_ROLE_GROUP")).Succeeded)
+                    {
+                            <a class="btn btn-danger" asp-action="DeleteProjectRoleGroup" asp-route-id="<and symbol here>item.ProjectRoleGroup_ID">Delete</a>
+                }
+                else
+                {
+                            <span tabindex="0" data-toggle="tooltip" title="You do not have authority to delete Projects Role Groups.">
+                                <button type="button" class="btn btn-danger" style="pointer-events: none;" disabled>Delete</button>
+                            </span>
+                }
+                            </td>-->
+            </tr>
+        }
+    </tbody>
+</table>
+<p> Add Question</p>
+<text></text>

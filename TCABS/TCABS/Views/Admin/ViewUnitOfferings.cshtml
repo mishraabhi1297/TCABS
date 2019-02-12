@@ -1,0 +1,210 @@
+﻿@inject IAuthorizationService AuthorizationService
+@using Microsoft.AspNetCore.Authorization
+@model IEnumerable<TCABS.Data.Models.Entities.UnitOffering>
+
+@{
+    ViewData["Title"] = "Unit Offering Details";
+}
+
+<div class="row mb-4">
+    <div class="col-6">
+        <h2>@ViewData["Title"]</h2>
+    </div>
+    <div class="col-6 text-right">
+        @if ((await AuthorizationService.AuthorizeAsync(User, "CREATE_UNIT_OFFERING")).Succeeded)
+        {
+            <a class="btn btn-primary" asp-action="CreateUnitOffering">Create New Unit Offering</a>
+        }
+        else
+        {
+            <span tabindex="0" data-toggle="tooltip" title="You do not have authority to create Unit Offerings.">
+                <button type="button" class="btn btn-primary" style="pointer-events: none;" disabled>Create New Unit Offering</button>
+            </span>
+        }
+    </div>
+</div>
+
+<table class="table responsive nowrap" id="unitOfferingTable" style="width:100%">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.UnitOffering_ID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Unit_Code)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Unit_Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UnitOffering_StartDate)
+            </th>
+            <th class="filter-select">
+                @Html.DisplayNameFor(model => model.StudyPeriod_Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Convenor_Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnitOffering_ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Unit_Code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Unit_Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnitOffering_StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StudyPeriod_Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Convenor_Name)
+                </td>
+                <td>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "EDIT_UNIT_OFFERING")).Succeeded)
+                    {
+                        <a class="btn btn-success" asp-action="EditUnitOffering" asp-route-id="@item.UnitOffering_ID">Edit</a>
+                    }
+                    else
+                    {
+                        <span tabindex="0" data-toggle="tooltip" title="You do not have authority to edit Unit Offerings.">
+                            <button type="button" class="btn btn-success" style="pointer-events: none;" disabled>Edit</button>
+                        </span>
+                    }
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "DELETE_UNIT_OFFERING")).Succeeded)
+                    {
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal-@item.UnitOffering_ID">Delete</button>
+                        <div class="modal fade" id="deleteModal-@item.UnitOffering_ID" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    @if (item.CanBeRemoved)
+                                    {
+                                        <div class="modal-header">
+                                            <h1 class="modal-title">Delete @item.Unit_Name (@item.UnitOffering_StartDate)?</h1>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Do you wish to delete this Unit Offering?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            <a class="btn btn-danger" asp-action="DeleteUnitOffering" asp-route-id="@item.UnitOffering_ID">Delete</a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="modal-header">
+                                            <h1 class="modal-title">Notice</h1>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>You cannot delete this unit offering as students have been enrolled in this unit offering previously.</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <span tabindex="0" data-toggle="tooltip" title="You do not have authority to delete Unit Offering.">
+                            <button type="button" class="btn btn-danger" style="pointer-events: none;" disabled>Delete</button>
+                        </span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <th></th>
+            <th class="filter-input">
+                @Html.DisplayNameFor(model => model.Unit_Code)
+            </th>
+            <th class="filter-input">
+                @Html.DisplayNameFor(model => model.Unit_Name)
+            </th>
+            <th class="filter-input">
+                @Html.DisplayNameFor(model => model.UnitOffering_StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StudyPeriod_Name)
+            </th>
+            <th class="filter-input">
+                @Html.DisplayNameFor(model => model.Convenor_Name)
+            </th>
+            <th></th>
+        </tr>
+    </tfoot>
+</table>
+@section Scripts
+    {
+<script>
+    var searchValue = document.location.href.split('?').pop();
+    var value = searchValue.split('=').pop();
+    var table = $(document).ready(function () {
+        $('#unitOfferingTable .filter-input').each(function () {
+
+            $(this).html('<input class="form-control" type="text" placeholder="Search" />');
+        });
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            $($.fn.dataTable.tables(true)).DataTable()
+                .columns.adjust()
+                .fixedColumns().relayout();
+        });
+
+        $('#unitOfferingTable').DataTable({
+
+            "dom": '<"d-flex justify-content-between"<lfr>>rt<"bottom"ip><"clear">',
+            "responsive": true,
+            initComplete: function () {
+                this.api().columns('.filter-select').every(function () {
+                    var column = this;
+                    var select = $('<select class="form-control"><option value=""></option></select>')
+                        .appendTo($(column.footer()).empty())
+                        .on('change', function () {
+                            var val = $.fn.dataTable.util.escapeRegex(
+                                $(this).val()
+                            );
+
+                            column
+                                .search(val ? '^' + val + '$' : '', true, false)
+                                .draw();
+                        });
+
+                    column.data().unique().sort().each(function (d, j) {
+                        select.append('<option value="' + d + '">' + d + '</option>')
+                    });
+                });
+                this.api().columns().every(function () {
+                    var that = this;
+
+                    $('input', this.footer()).on('keyup change', function () {
+                        if (that.search() !== this.value) {
+                            that
+                                .search(this.value)
+                                .draw();
+                        }
+                    });
+
+                });
+
+            }
+
+
+        });
+
+    });
+</script>
+}

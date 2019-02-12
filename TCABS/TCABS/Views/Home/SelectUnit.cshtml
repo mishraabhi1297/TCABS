@@ -1,0 +1,28 @@
+﻿@model TCABS.Data.Models.Home.UnitSelectViewModel
+
+@{
+    ViewData["Title"] = "TCABS";
+}
+
+<div class="select-unit pt-5">
+    <div class="text-center">
+        <img src="/images/logo.png" class="logo bg-danger rounded-circle" alt="Logo" />
+        <h1 class="display-3">@ViewData["Title"]</h1>
+        <p class="lead">Welcome @User.Claims.First(x => x.Type == "FIRSTNAME").Value</p>
+    </div>
+    <div class="card">
+        <div class="card-header">Select a Unit</div>
+        <div class="list-group list-group-flush">
+            @foreach (var unit in Model.Units)
+            {
+                <a class="list-group-item list-group-item-action" asp-action="UnitSelected" asp-route-id="@unit.UnitOfferingID">
+                    <div class="row">
+                        <div class="col-12">@unit.UnitName (@unit.UnitCode)</div>
+                        <div class="col-12">@unit.UnitOfferingStartDate.ToString("MMMM yyyy")</div>
+                        
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+</div>

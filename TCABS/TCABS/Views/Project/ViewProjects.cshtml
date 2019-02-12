@@ -1,0 +1,184 @@
+﻿@inject IAuthorizationService AuthorizationService
+@using Microsoft.AspNetCore.Authorization
+@using TCABS.Data.Models.Entities
+@model IEnumerable<Project>
+
+@{
+    ViewData["Title"] = "Ongoing Projects";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-6">
+            <h2>@ViewData["Title"]</h2>
+        </div>
+        <div class="col-6 text-right">
+            <a class="btn btn-primary" asp-action="CreateProject">Create New Project</a>
+        </div>
+    </div>
+</div>
+<table class="table" id="projectTable">
+    <thead>
+        <tr>
+            <th class="filter-select">
+                @Html.DisplayNameFor(model => model.ProjectRoleGroup_TYPE)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Project_NAME)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Project_BUDGET)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProjectRoleGroup_TYPE)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Project_NAME)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Project_BUDGET)
+                </td>
+                <td>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "EDIT_PROJECT")).Succeeded)
+                    {
+                        <a class="btn btn-success" asp-action="EditProject" asp-route-id="@item.Project_ID">Edit</a>
+                    }
+                    else
+                    {
+                        <span tabindex="0" data-toggle="tooltip" title="You do not have authority to edit Projects.">
+                            <button type="button" class="btn btn-success" style="pointer-events: none;" disabled>Edit</button>
+                        </span>
+                    }
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "DELETE_PROJECT")).Succeeded)
+                    {
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal-@item.Project_ID">Delete</button>
+                        <div class="modal fade" id="deleteModal-@item.Project_ID" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    @if (item.CanBeRemoved)
+                                    {
+                                        <div class="modal-header">
+                                            <h1 class="modal-title">Delete @item.Project_NAME?</h1>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Do you wish to delete this Project?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            <a class="btn btn-danger" asp-action="DeleteProject" asp-route-id="@item.Project_ID">Delete</a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="modal-header">
+                                            <h1 class="modal-title">Notice</h1>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>You cannot delete this project as it has been assigned to a team.</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <span tabindex="0" data-toggle="tooltip" title="You do not have authority to delete Projects.">
+                            <button type="button" class="btn btn-danger" style="pointer-events: none;" disabled>Delete</button>
+                        </span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ProjectRoleGroup_TYPE)
+            </th>
+            <th class="filter-input">
+                @Html.DisplayNameFor(model => model.Project_NAME)
+            </th>
+            <th></th>
+        </tr>
+    </tfoot>
+</table>
+
+@section Scripts
+    {
+    <script>
+        var searchValue = document.location.href.split('?').pop();
+        var value = searchValue.split('=').pop();
+
+        var table = $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $('#projectTable .filter-input').each(function () {
+                $(this).html('<input class="form-control" type="text" placeholder="Search" />');
+            });
+
+            $('#projectTable').DataTable({
+                "dom": '<"d-flex justify-content-between"<l><B>>rt<"bottom"ip><"clear">',
+                "buttons": [
+                    'copyHtml5',
+                    'excelHtml5',
+                    'csvHtml5',
+                    'pdfHtml5'
+                ],
+                initComplete: function () {
+                    this.api().columns('.filter-select').every(function () {
+                        var column = this;
+                        var select = $('<select class="form-control"><option value=""></option></select>')
+                            .appendTo($(column.footer()).empty())
+                            .on('change',
+                            function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            if (column.search() === '^' + d + '$') {
+                                select.append('<option value="' + d + '" selected="selected">' + d + '</option>');
+                            } else {
+                                select.append('<option value="' + d + '">' + d + '</option>');
+                            }
+                        });
+
+                        if (searchValue != value) {
+                            select.val(value);
+                            select.trigger('change');
+                        }
+                    });
+
+                    this.api().columns().every(function () {
+                        var that = this;
+
+                        $('input', this.footer()).on('keyup change',
+                            function () {
+                                if (that.search() !== this.value) {
+                                    that
+                                        .search(this.value)
+                                        .draw();
+                                }
+                            });
+                    });
+                }
+            });
+        });
+    </script>
+}

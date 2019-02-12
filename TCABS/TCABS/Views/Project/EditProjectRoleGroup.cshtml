@@ -1,0 +1,25 @@
+﻿@model TCABS.Data.Models.Entities.ProjectRoleGroup
+
+<h4>ProjectRoleGroup</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditProjectRoleGroup">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ProjectRoleGroup_ID" />
+            <div class="form-group">
+                <label asp-for="ProjectRoleGroup_TYPE"></label>
+                <input asp-for="ProjectRoleGroup_TYPE" class="form-control" />
+                <span asp-validation-for="ProjectRoleGroup_TYPE" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <a class="btn btn-secondary" asp-action="ViewProjectRoleGroups">Cancel</a>
+                <input type="submit" value="Save" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,224 @@
+﻿@model IEnumerable<TCABS.Data.Models.Report_Unit_Overview>
+@{
+    ViewData["Title"] = "Unit Overview Report";
+}
+<h1>Unit Overview Report</h1>
+<a asp-area="" class="btn btn-outline-primary" asp-controller="Report" asp-action="Report_Home" aria-label="Previous">&laquo; Report Home</a>
+
+<br />
+<br />
+<table class="table responsive nowrap" id="reportTable" style="width: 100%">
+    <thead>
+        <tr>
+
+            <th class="filter-select">
+                @Html.DisplayNameFor(model => model.TEAM_NAME)
+            </th>
+            <th class="filter-select">
+                @Html.DisplayNameFor(model => model.BUDGET_STATE)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PROJECT_BUDGET)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.REMAINING_BUDGET)
+            </th>
+
+            <th class="filter-select">
+                @Html.DisplayNameFor(model => model.PROJECT_NAME)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UNIT_NAME)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.TEAM_NAME)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BUDGET_STATE)
+            </td>
+            <td>
+                $@Html.DisplayFor(modelItem => item.PROJECT_BUDGET)
+            </td>
+            <td>
+                $@Html.DisplayFor(modelItem => item.REMAINING_BUDGET)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PROJECT_NAME)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UNIT_NAME)
+            </td>
+        </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </tfoot>
+</table>
+
+
+
+@section Scripts
+    {
+    <script>
+
+        var searchValue = document.location.href.split('?').pop();
+        var value = searchValue.split('=').pop();
+        var table = $(document).ready(function () {
+            $('#reportTable .filter-input').each(function () {
+
+                $(this).html('<input class="form-control" type="text" placeholder="Search" />');
+            });
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                $($.fn.dataTable.tables(true)).DataTable()
+                    .columns.adjust()
+                    .fixedColumns().relayout();
+            });
+
+           /* $('#reportTable').on('click', '.group-checkbox', function (e) {
+
+            });*/
+
+            $('#reportTable').DataTable({
+
+                "dom": '<"d-flex justify-content-between"<lfr><B>>rt<"bottom"ip><"clear">',
+                "responsive": true,
+                select: true,
+                "buttons": [
+                    {
+                        extend: 'collection',
+                        text: 'Select',
+                        buttons: [
+                            'selectAll',
+                            'selectNone',
+                            'selectRows'
+                        ]
+                    },
+                    {
+                        extend: 'collection',
+                        text: 'Export',
+                        buttons: [
+                            {
+                                extend: 'pdfHtml5',
+                                download: 'open',
+                                text: 'Download PDF',
+                                orientation: 'landscape',
+                                exportOptions: {
+                                    columns: ':visible:not(.not-export-col)'
+                                }
+                            },
+                            {
+                                extend: 'csvHtml5',
+                                text: 'Download CSV',
+                                exportOptions: {
+                                    columns: ':visible:not(.not-export-col)'
+                                }
+                            },
+                            {
+                                extend: 'excelHtml5',
+                                text: 'Download Excel',
+                                exportOptions: {
+                                    columns: ':visible:not(.not-export-col)'
+                                }
+                            },
+
+                            {
+                                extend: 'print',
+                                text: 'Print Report',
+                                exportOptions: {
+                                    columns: ':visible:not(.not-export-col)'
+                                }
+                            }]
+                    },
+                    {
+                        "extend": 'colvis',
+                        "columns": ':not(.notToggleVis)',
+                        "postfixButtons": ['colvisRestore']
+                    }
+
+                ],
+
+                "order": [[0, 'asc']],
+
+               /* rowGroup: {
+
+                    endRender: function (rows, group) {
+                        var total = rows
+                            .data()
+                            .pluck(8)
+                            .reduce(function (a, b) {
+                                return a + b.replace(/[^\d]/g, '') * 1;
+                            }, 0) / 60;
+                        var totalcost = rows
+                            .data()
+                            .pluck(9)
+                            .reduce(function (a, b) {
+                                return a + b.replace(/[^\d]/g, '') * 1;
+                            }, 0);
+
+                        return group + ' - ' + ' Total Task Time ' + ': ' +
+                            $.fn.dataTable.render.number(',', '.', 0).display(total) + ' Hours' + ' - ' + 'Total Cost: $' + $.fn.dataTable.render.number(',', '.', 0).display(totalcost);
+                    },
+                    dataSrc: 0
+                },*/
+                rowGroup: {
+                    startRender: function (rows, group) {
+                        return 'Budget State: ' + group;
+                    },
+                    dataSrc: 1
+                },
+
+                initComplete: function () {
+                    this.api().columns('.filter-select').every(function () {
+                        var column = this;
+                        var select = $('<select class="form-control"><option value=""></option></select>')
+                            .appendTo($(column.footer()).empty())
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d + '">' + d + '</option>')
+                        });
+                    });
+                    this.api().columns().every(function () {
+                        var that = this;
+
+                        $('input', this.footer()).on('keyup change', function () {
+                            if (that.search() !== this.value) {
+                                that
+                                    .search(this.value)
+                                    .draw();
+                            }
+                        });
+
+                    });
+
+                }
+
+
+            });
+
+        });
+    </script>
+}

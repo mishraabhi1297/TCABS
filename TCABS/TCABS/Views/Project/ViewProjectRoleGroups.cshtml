@@ -1,0 +1,125 @@
+﻿@inject IAuthorizationService AuthorizationService
+@using Microsoft.AspNetCore.Authorization
+@model IEnumerable<TCABS.Data.Models.Entities.ProjectRoleGroup>
+
+@{
+    ViewData["Title"] = "Project Role Groups";
+}
+<div class="row mb-4">
+    <div class="col-6">
+        <h2>@ViewData["Title"]</h2>
+    </div>
+    <div class="col-6 text-right">
+        @if ((await AuthorizationService.AuthorizeAsync(User, "CREATE_PROJECT_ROLE_GROUP")).Succeeded)
+        {
+            <a class="btn btn-primary" asp-action="CreateProjectRoleGroup">Create a New Project Role Group</a>
+        }
+        else
+        {
+            <span tabindex="0" data-toggle="tooltip" title="You do not have authority to create Project Role Groups.">
+                <button type="button" class="btn btn-primary" style="pointer-events: none;" disabled>Create New Project Role Group</button>
+            </span>
+        }
+    </div>
+</div>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ProjectRoleGroup_TYPE)
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProjectRoleGroup_TYPE)
+            </td>
+            <td>
+                @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_PROJECT_LIST")).Succeeded)
+                {
+                    <a class="btn btn-primary" asp-action="ViewProjects" asp-route-type="@item.ProjectRoleGroup_TYPE">View Projects in Group</a>
+                }
+                else
+                {
+                    <span tabindex="0" data-toggle="tooltip" title="You do not have authority to view Projects.">
+                        <button type="button" class="btn btn-primary" style="pointer-events: none;" disabled>View Projects in Group</button>
+                    </span>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "VIEW_PROJECT_ROLE_LIST")).Succeeded)
+                {
+                    <a class="btn btn-primary" asp-action="ViewProjectRoles" asp-route-id="@item.ProjectRoleGroup_ID">View Project Roles in Group</a>
+                }
+                else
+                {
+                    <span tabindex="0" data-toggle="tooltip" title="You do not have authority to view Project Roles.">
+                        <button type="button" class="btn btn-primary" style="pointer-events: none;" disabled>View Project Roles in Group</button>
+                    </span>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "EDIT_PROJECT_ROLE_GROUP")).Succeeded)
+                {
+                    <a class="btn btn-success" asp-action="EditProjectRoleGroup" asp-route-id="@item.ProjectRoleGroup_ID">Edit</a>
+                }
+                else
+                {
+                    <span tabindex="0" data-toggle="tooltip" title="You do not have authority to edit Project Role Groups.">
+                        <button type="button" class="btn btn-success" style="pointer-events: none;" disabled>Edit</button>
+                    </span>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "DELETE_PROJECT_ROLE_GROUP")).Succeeded)
+                {
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal-@item.ProjectRoleGroup_ID">Delete</button>
+                    <div class="modal fade" id="deleteModal-@item.ProjectRoleGroup_ID" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                @if (item.CanBeRemoved)
+                                {
+                                    <div class="modal-header">
+                                        <h1 class="modal-title">Delete @item.ProjectRoleGroup_TYPE?</h1>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Do you wish to delete this Project Role?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                        <a class="btn btn-danger" asp-action="DeleteProjectRoleGroup" asp-route-id="@item.ProjectRoleGroup_ID">Delete</a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="modal-header">
+                                        <h1 class="modal-title">Notice</h1>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>You cannot delete this Project Role Group as a Project has been assigned to this group.</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <span tabindex="0" data-toggle="tooltip" title="You do not have authority to delete Projects Role Groups.">
+                        <button type="button" class="btn btn-danger" style="pointer-events: none;" disabled>Delete</button>
+                    </span>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function() {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+}

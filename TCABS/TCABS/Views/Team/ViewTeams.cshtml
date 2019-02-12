@@ -1,0 +1,111 @@
+﻿@inject IAuthorizationService AuthorizationService
+@using Microsoft.AspNetCore.Authorization
+@using TCABS.Data.Models.Team
+@model TeamViewModel
+
+@{
+    ViewData["Title"] = "Teams for " + @Model.SelectedUnitName;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-6">
+            <h2>@ViewData["Title"]</h2>
+        </div>
+        <div class="col-6 text-right">
+            <a class="btn btn-primary" asp-action="CreateTeam">Create New Team</a>
+        </div>
+    </div>
+</div>
+<table class="table" id="projectTable">
+    <thead>
+        <tr>
+            <th>
+                Team
+            </th>
+            <th>
+                Project
+            </th>
+            <th>
+                Supervisor
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var team in Model.Teams)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => team.TeamName) (ID @Html.DisplayFor(modelItem => team.TeamID))
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => team.ProjectName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => team.SupervisorName)
+                </td>
+                <td>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "EDIT_PROJECT")).Succeeded)
+                    {
+                        <a class="btn btn-success" asp-action="EditTeam" asp-route-id="@team.TeamID">Edit</a>
+                    }
+                    else
+                    {
+                        <span tabindex="0" data-toggle="tooltip" title="You do not have authority to edit Teams.">
+                            <button type="button" class="btn btn-success" style="pointer-events: none;" disabled>Edit</button>
+                        </span>
+                    }
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "DELETE_PROJECT")).Succeeded)
+                    {
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal-@team.TeamID">Delete</button>
+                        <div class="modal fade" id="deleteModal-@team.TeamID" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    @if (team.CanBeRemoved)
+                                    {
+                                        <div class="modal-header">
+                                            <h1 class="modal-title">Delete @team.TeamName?</h1>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Do you wish to delete this Team?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            <a class="btn btn-danger" asp-action="DeleteTeam" asp-route-id="@team.TeamID">Delete</a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="modal-header">
+                                            <h1 class="modal-title">Notice</h1>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>You cannot delete this team as it has been assigned a team member.</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <span tabindex="0" data-toggle="tooltip" title="You do not have authority to delete Teams.">
+                            <button type="button" class="btn btn-danger" style="pointer-events: none;" disabled>Delete</button>
+                        </span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script>
+        $('[data-toggle="tooltip"]').tooltip();
+    </script>
+}

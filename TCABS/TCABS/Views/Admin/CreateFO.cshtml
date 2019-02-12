@@ -1,0 +1,30 @@
+﻿@using TCABS.Data.Models.Admin
+@using TCABS.Data.Models.AdminViewModels
+@model TCABS.Data.Models.Admin.FormViewModel
+
+<h1>Create a new Form</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <!--<form asp-action="CreateForm">-->
+            <form asp-action="CreateFO">
+                <!--<form asp-action="CreateStudent">-->
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="row">
+                    <div class="form-group col-6">
+                        <!--Form Name-->
+                        <label asp-for="Form_Name"></label>
+                        <input asp-for="Form_Name" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DueDate">Due Date</label>
+                    <input asp-for="DueDate" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <a class="btn btn-secondary">Cancel</a>
+                    <input type="submit" value="Confirm Changes" class="btn btn-success" />
+                </div>
+            </form>
+    </div>
+</div>

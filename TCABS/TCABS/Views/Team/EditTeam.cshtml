@@ -1,0 +1,33 @@
+﻿@model TCABS.Data.Models.Team.Team
+
+<h4>Project</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="EditTeam">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="TeamID" />
+            <div class="form-group">
+                <label asp-for="TeamName"></label>
+                <input asp-for="TeamName" class="form-control" />
+                <span asp-validation-for="TeamName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label>Project</label>
+                @Html.DropDownListFor(model => model.ProjectAllocID, new SelectList(Model.Projects, "ProjectAllocID", "ProjectName", Model.ProjectAllocID), "Select Project", new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                <label>Supervisor</label>
+                @Html.DropDownListFor(model => model.SupervisorUserID, new SelectList(Model.EmployeeList, "SupervisorUserID", "SupervisorName", Model.SupervisorUserID), "Select Supervisor", new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-success" />
+                <a class="btn btn-secondary" asp-action="ViewTeams">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

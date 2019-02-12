@@ -1,0 +1,47 @@
+﻿@using Identity.Dapper.Entities
+@using Microsoft.AspNetCore.Identity
+@using TCABS.Data.Models.AccountViewModels
+
+@model LoginViewModel
+
+@inject SignInManager<DapperIdentityUser> SignInManager
+
+@{
+    ViewData["Title"] = "TCABS";
+}
+
+
+<div class="row justify-content-center">
+    <div class="login pt-5">
+        <img src="/images/logo.png" class="logo bg-danger rounded-circle" alt="Logo" />
+        <h1 class="display-3">@ViewData["Title"]</h1>
+        <p class="lead">Team Contribution and Budget System</p>
+        <section>
+            <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                <hr/>
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Username" class="sr-only"></label>
+                    <input asp-for="Username" placeholder="Username" class="form-control text-center"/>
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password" class="sr-only"></label>
+                    <input asp-for="Password" placeholder="Password" class="form-control text-center"/>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label asp-for="RememberMe">
+                            <input asp-for="RememberMe"/>
+                            @Html.DisplayNameFor(m => m.RememberMe)
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-danger btn-block">Login</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>

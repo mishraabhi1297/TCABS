@@ -1,0 +1,77 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Views\Admin\Role\**" />
+    <Compile Remove="Views\StudyPeriod\**" />
+    <Content Remove="Views\Admin\Role\**" />
+    <Content Remove="Views\StudyPeriod\**" />
+    <EmbeddedResource Remove="Views\Admin\Role\**" />
+    <EmbeddedResource Remove="Views\StudyPeriod\**" />
+    <None Remove="Views\Admin\Role\**" />
+    <None Remove="Views\StudyPeriod\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\StudyPeriodController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\Shared\Components\UnitSelected\UnitSelected.cshtml" />
+    <Content Remove="Views\Shared\Components\UnitSelector\UnitSelector.cshtml" />
+    <Content Remove="wwwroot\lib\bootstrap\css\bootstrap.css.map" />
+    <Content Remove="wwwroot\lib\bootstrap\css\bootstrap.min.css" />
+    <Content Remove="wwwroot\lib\bootstrap\css\bootstrap.min.css.map" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Properties\PublishProfiles\CustomProfile.pubxml" />
+    <None Remove="Properties\PublishProfiles\Deploy.pubxml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Shared\Components\UnitSelector\UnitSelector.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.4" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Admin\CreateEmployee.cshtml" />
+    <None Include="Views\Admin\EditEmployee.cshtml" />
+    <None Include="Views\Admin\ViewEmployees.cshtml" />
+    <None Include="Views\Report\Report_All_Projects.cshtml" />
+    <None Include="Views\Report\Report_Budget_Weekly.cshtml" />
+    <None Include="Views\Report\Report_Enrolled_Students.cshtml" />
+    <None Include="Views\Report\Report_Home.cshtml" />
+    <None Include="Views\Report\Report_Project_Budget.cshtml" />
+    <None Include="Views\Report\Report_Registered_Convenors.cshtml" />
+    <None Include="Views\Report\Report_Registered_Teams.cshtml" />
+    <None Include="Views\Report\Report_Summary_Student_Teams.cshtml" />
+    <None Include="Views\Report\Report_Supervisor.cshtml" />
+    <None Include="Views\Report\Report_Team_Weekly.cshtml" />
+    <None Include="Views\Report\Report_Unit_Overview.cshtml" />
+    <None Include="Views\Shared\Components\UnitSelected\UnitSelected.cshtml" />
+    <None Include="Views\Shared\Components\UnitSelector\UnitSelector.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Identity.Dapper-master\src\Identity.Dapper.SqlServer\Identity.Dapper.SqlServer.csproj" />
+    <ProjectReference Include="..\TCABS.Data\TCABS.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
+  </ItemGroup>
+
+</Project>

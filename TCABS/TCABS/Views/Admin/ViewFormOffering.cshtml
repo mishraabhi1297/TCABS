@@ -1,0 +1,51 @@
+﻿@inject IAuthorizationService AuthorizationService
+@using Microsoft.AspNetCore.Authorization
+@using TCABS.Data.Models.Admin
+@model IEnumerable<FormOfferingViewModel>
+
+
+<h2>Form Offering</h2>
+<div class="col-12 text-right">
+        @if ((await AuthorizationService.AuthorizeAsync(User, "CREATE_EMPLOYEE")).Succeeded)
+        {
+            <a class="btn btn-primary" asp-action="CreateFO">Create new Form</a>
+        }
+</div>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Form_Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DueDate)
+        </th>
+        <th>
+        </th>
+        <th>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Form_Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DueDate)
+            </td>
+            <td>
+                <a class="btn btn-primary" asp-action="ViewFormItems" asp-route-id="@item.Form_ID">View Form Questions</a>
+            </td>
+            <td>
+                @if ((await AuthorizationService.AuthorizeAsync(User, "CREATE_EMPLOYEE")).Succeeded)
+                {
+                    <a class="btn btn-success" asp-action="ViewFormCategories" asp-route-id="@item.Form_ID">Add Questions</a>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

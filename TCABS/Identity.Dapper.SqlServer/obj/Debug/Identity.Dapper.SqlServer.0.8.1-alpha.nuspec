@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Identity.Dapper.SqlServer</id>
+    <version>0.8.1-alpha</version>
+    <authors>grandchamp</authors>
+    <owners>grandchamp</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/grandchamp/Identity.Dapper/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/grandchamp/Identity.Dapper</projectUrl>
+    <description>Identity package that uses Dapper with SQL Server instead EntityFramework for use with .NET Core.</description>
+    <tags>asp.net core dapper identity sql sqlserver</tags>
+    <repository type="git" url="https://github.com/grandchamp/Identity.Dapper.git" />
+    <dependencies>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="Identity.Dapper" version="0.8.1-alpha" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Configuration" version="2.0.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Configuration.Json" version="2.0.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Configuration.UserSecrets" version="2.0.1" exclude="Build,Analyzers" />
+        <dependency id="System.Data.SqlClient" version="4.4.3" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="E:\Git\repo\dotnet\TCABS\Identity.Dapper.SqlServer\bin\Debug\netstandard2.0\Identity.Dapper.SqlServer.dll" target="lib\netstandard2.0\Identity.Dapper.SqlServer.dll" />
+  </files>
+</package>

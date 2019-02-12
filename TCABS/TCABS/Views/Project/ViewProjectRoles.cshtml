@@ -1,0 +1,229 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using TCABS.Data.Models.Project
+@model ProjectRoleViewModel
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = "Project Roles for Group";
+}
+<div class="row mb-4">
+    <div class="col-6">
+        <h2>@ViewData["Title"]</h2>
+    </div>
+    <div class="col-6 text-right">
+        @if ((await AuthorizationService.AuthorizeAsync(User, "CREATE_PROJECT_ROLE")).Succeeded)
+        {
+            <a class="btn btn-primary" asp-action="CreateProjectRole" asp-route-roleGroupID="@Model.RoleGroupID">Create New Project Role</a>
+        }
+        else
+        {
+            <span tabindex="0" data-toggle="tooltip" title="You do not have authority to create Project Roles.">
+                <button type="button" class="btn btn-primary" style="pointer-events: none;" disabled>Create New Project Role</button>
+            </span>
+        }
+    </div>
+</div>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Roles.FirstOrDefault().ProjectRoleName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Roles.FirstOrDefault().ProjectRoleRate)
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var role in Model.Roles)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => role.ProjectRoleName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => role.ProjectRoleRate)
+            </td>
+            <td>
+                @if (Model.RoleGroupID != null)
+                {
+                    if (role.CanBeDeallocated)
+                    {
+                        if (Model.SelectedRoles.Contains(role.ProjectRoleID))
+                        {
+                            <div class="btn-group-toggle rolebutton d-inline-block" data-toggle="buttons">
+                                <label class="btn btn-outline-info rolebutton active" for="@(role.ProjectRoleID)">
+                                    <input id="role@(role.ProjectRoleID)"
+                                           type="checkbox"
+                                           name="SelectedRoles"
+                                           value="@role.ProjectRoleID"
+                                           aria-pressed="true"
+                                           @(Model.SelectedRoles.Contains(role.ProjectRoleID) ? "checked" : "") checked/>
+                                    Added
+                                </label>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="btn-group-toggle rolebutton d-inline-block" data-toggle="buttons">
+                                <label class="btn btn-outline-info rolebutton" for="@(role.ProjectRoleID)">
+                                    <input id="role@(role.ProjectRoleID)"
+                                           type="checkbox"
+                                           name="SelectedRoles"
+                                           value="@role.ProjectRoleID"
+                                           @(Model.SelectedRoles.Contains(role.ProjectRoleID) ? "checked" : "")/>
+                                    Add to Group
+                                </label>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <span tabindex="0" data-toggle="tooltip" title="You cannot remove the Role from this Group as it has been used in a Timelog.">
+                            <button type="button" class="btn btn-info rolebutton" style="pointer-events: none;" disabled>Added</button>
+                        </span>
+                    }
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "EDIT_PROJECT_ROLE")).Succeeded)
+                {
+                    <a class="btn btn-success" asp-action="EditProjectRole" asp-route-id="@role.ProjectRoleID" asp-route-roleGroupID="@Model.RoleGroupID">Edit</a>
+                }
+                else
+                {
+                    <span tabindex="0" data-toggle="tooltip" title="You do not have authority to edit Project Roles.">
+                        <button type="button" class="btn btn-success" style="pointer-events: none;" disabled>Edit</button>
+                    </span>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "DELETE_PROJECT_ROLE")).Succeeded)
+                {
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal-@role.ProjectRoleID">Delete</button>
+                    <div class="modal fade" id="deleteModal-@role.ProjectRoleID" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                @if (role.CanBeRemoved)
+                                {
+                                    <div class="modal-header">
+                                        <h1 class="modal-title">Delete @role.ProjectRoleName?</h1>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Do you wish to delete this Project Role?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                        <a class="btn btn-danger"
+                                           asp-action="DeleteProjectRole"
+                                           asp-route-id="@role.ProjectRoleID"
+                                           asp-route-roleGroupID="@Model.RoleGroupID">
+                                            Delete
+                                        </a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="modal-header">
+                                        <h1 class="modal-title">Notice</h1>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>You cannot delete this project role as it has been assigned to a Role Group.</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <span tabindex="0" data-toggle="tooltip" title="You do not have authority to delete Project Roles.">
+                        <button type="button" class="btn btn-danger" style="pointer-events: none;" disabled>Delete</button>
+                    </span>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        var $inputs = $('.btn-group-toggle');
+
+        var roleGroup = document.location.href.split('/').pop();
+
+        var buttonText = ["Add to Group", "Add to Group", "Added", "Remove from Group"];
+
+        jQuery(function() {
+            jQuery('[data-toggle="tooltip"]').tooltip();
+        });
+
+        $inputs.hover(function() {
+                const label = $(this).children();
+
+                if (label.text().trim() === buttonText[0]) {
+                    label.text(buttonText[1]);
+                } else if (label.text().trim() === buttonText[2]) {
+                    label.text(buttonText[3]);
+                }
+            },
+            function() {
+                const label = $(this).children();
+
+                if (label.text().trim() === buttonText[1]) {
+                    label.text(buttonText[0]);
+                } else if (label.text().trim() === buttonText[3]) {
+                    label.text(buttonText[2]);
+                }
+            }
+        );
+
+        $inputs.click(function () {
+
+
+            if ($(this).children().text() === buttonText[0]) {
+                $(this).children().text(buttonText[2]);
+            }
+            else if ($(this).children().text() === buttonText[1]) {
+                $(this).children().text(buttonText[3]);
+            }
+            else if ($(this).children().text() === buttonText[2]) {
+                $(this).children().text(buttonText[0]);
+            }
+            else if ($(this).children().text() === buttonText[3]) {
+                $(this).children().text(buttonText[1]);
+            }
+                
+            const value = $(this).children()[0].getAttribute('for');
+
+            var form = new FormData();
+            form.append('id', value);
+            form.append('roleGroup', roleGroup);
+            $.ajax({
+                type: 'POST',
+                url: '/Project/UpdateRoleInGroup',
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('XSRF-TOKEN',
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: form,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    if (response.length === 0) {
+                        $('#uploadError').html("Some error occured while uploading.");
+                        $('#uploadError').removeClass("invisible");
+                        //alert('Some error occured while uploading');
+                    } else {
+                        $('#uploadError').addClass("invisible");
+                        $('#dvData').html(response);
+                    }
+                },
+                error: function(e) {
+                    $('#uploadError').addClass("invisible");
+                    $('#dvData').html(e.responseText);
+                }
+            });
+        });
+    </script>
+}

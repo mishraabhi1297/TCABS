@@ -1,0 +1,25 @@
+﻿@model TCABS.Data.Models.Entities.StudyPeriod
+
+<h4>StudyPeriod</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateStudyPeriod">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="StudyPeriod_Name" class="control-label"></label>
+                <input asp-for="StudyPeriod_Name" class="form-control" />
+                <span asp-validation-for="StudyPeriod_Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <a class="btn btn-danger" asp-action="ViewStudyPeriods">Cancel</a>
+                <input type="submit" value="Create" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

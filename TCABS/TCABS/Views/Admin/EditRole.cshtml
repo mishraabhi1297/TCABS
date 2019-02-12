@@ -1,0 +1,33 @@
+﻿@model TCABS.Data.Models.AdminViewModels.RoleClaimViewModel
+
+<h4>Editing @Model.RoleName</h4>
+<hr />
+<div class="row mx-4">
+    <div>
+        <form asp-action="EditRole">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="RoleID" />
+            @foreach (var claimList in Model.ClaimLists)
+            {
+                <h5>@claimList.First().ClaimType</h5>
+                <div class="row">
+                    @foreach (var claim in claimList)
+                    {
+                        <div class="col-lg-3 col-md-6">
+                            <input id="claim@(claim.ID)"
+                                type="checkbox"
+                                name="SelectedClaims"
+                                value="@claim.ID"
+                                @(Model.SelectedClaims.Contains(claim.ID) ? "checked" : "") />
+                            <label for="@(claim.ID)">@claim.DisplayName</label>
+                        </div>
+                    }
+                </div>
+            }
+                <div class="form-group">
+                    <a class="btn btn-secondary" asp-action="ViewRoles">Cancel</a>
+                    <input type="submit" value="Save" class="btn btn-success" />
+                </div>
+        </form>
+    </div>
+</div>

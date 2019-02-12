@@ -1,0 +1,134 @@
+﻿@inject IAuthorizationService AuthorizationService
+@using Microsoft.AspNetCore.Authorization
+@using TCABS.Data.Models.Admin
+@using TCABS.Data.Models.AdminViewModels
+@model IEnumerable<TCABS.Data.Models.Admin.UserViewModel>
+
+
+@{
+    ViewData["Title"] = "Employee Accounts";
+}
+
+
+<div class="row mb-4">
+    <div class="col-6">
+        <h2>@ViewData["Title"]</h2>
+    </div>
+    <div class="col-6 text-right">
+        @if ((await AuthorizationService.AuthorizeAsync(User, "CREATE_EMPLOYEE")).Succeeded)
+        {
+            <a class="btn btn-primary" asp-action="CreateEmployee">Create New Employee</a>
+        }
+        else
+        {
+            <span tabindex="0" data-toggle="tooltip" title="You do not have authority to create Employee accounts.">
+                <button type="button" class="btn btn-primary" style="pointer-events: none;" disabled>Create New Employee</button>
+            </span>
+        }
+    </div>
+</div>
+<table class="table col-12">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Role)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Role)
+                </td>
+                <td>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "EDIT_EMPLOYEE")).Succeeded)
+                    {
+                        <a class="btn btn-success" asp-action="EditEmployee" asp-route-id="@item.ID">Edit</a>
+                    }
+                    else
+                    {
+                        <span tabindex="0" data-toggle="tooltip" title="You do not have authority to edit Employee accounts.">
+                            <button type="button" class="btn btn-success" style="pointer-events: none;" disabled>Edit</button>
+                        </span>
+                    }
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "DELETE_EMPLOYEE")).Succeeded)
+                    {
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal-@item.ID">Delete</button>
+                        <div class="modal fade" id="deleteModal-@item.ID" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    @if (item.CanBeRemoved)
+                                    {
+                                        <div class="modal-header">
+                                            <h1 class="modal-title">Delete @item.FirstName @item.LastName?</h1>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Do you wish to delete this Employee?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            <a class="btn btn-danger" asp-action="DeleteEmployee" asp-route-id="@item.ID">Delete</a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="modal-header">
+                                            <h1 class="modal-title">Notice</h1>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>You cannot delete this employee account as they have previously been allocated to a subject.</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <span tabindex="0" data-toggle="tooltip" title="You do not have authority to delete Employee accounts.">
+                            <button type="button" class="btn btn-danger" style="pointer-events: none;" disabled>Delete</button>
+                        </span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts
+    {
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+}

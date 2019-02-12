@@ -1,0 +1,34 @@
+﻿@model TCABS.Data.Models.Entities.UnitOffering
+
+<h4>UnitOffering</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateUnitOffering">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                @Html.DropDownListFor(model => model.Unit_ID, new SelectList(Model.Unit_List, "Unit_Id", "Unit_Name", Model.Unit_ID), "Select Unit", new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                @Html.DropDownListFor(model => model.StudyPeriod_ID, new SelectList(Model.SP_List, "StudyPeriod_ID", "StudyPeriod_Name", Model.StudyPeriod_ID), "Select Study Period", new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                @Html.DropDownListFor(model => model.Id, new SelectList(Model.employeeList, "Convenor_Id", "Convenor_Name", Model.Id), "Select Convenor", new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                <label asp-for="UnitOffering_StartDate" class="control-label"></label>
+                <input asp-for="UnitOffering_StartDate" class="form-control" />
+                <span asp-validation-for="UnitOffering_StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <a class="btn btn-danger" asp-action="ViewUnitOfferings">Cancel</a>
+                <input type="submit" value="Create" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

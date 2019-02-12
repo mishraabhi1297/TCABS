@@ -1,0 +1,273 @@
+﻿@model IEnumerable<TCABS.Data.Models.Report_Team_Weekly>
+    @{
+    ViewData["Title"] = "Team Weekly Report";
+    }
+    <h1>Team Weekly Report</h1>
+    <a asp-area="" class="btn btn-outline-primary" asp-controller="Report" asp-action="Report_Home" aria-label="Previous">&laquo; Report Home</a>
+    <br />
+    <br />
+    <table class="table responsive " id="reportTable" style="width: 100%" >
+        <thead>
+            <tr>
+                <th class="filter-select">
+                    @Html.DisplayNameFor(model => model.TEAM_NAME)
+                </th>
+                <th class="filter-select">
+                    @Html.DisplayNameFor(model => model.PROJECT_NAME)
+                </th>
+                <th class="filter-select">
+                    @Html.DisplayNameFor(model => model.WEEK_NUMBER)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TASK_DATE)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TIMELOG_TASKNAME)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.STUDENT_ID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.STUDENT_NAME)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PROJECTROLE_NAME)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TIMELOG_TOTALTIME)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.COST)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UNIT_NAME)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TEAM_NAME)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PROJECT_NAME)
+                </td>
+                <td>
+                    Week @Html.DisplayFor(modelItem => item.WEEK_NUMBER)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TASK_DATE)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TIMELOG_TASKNAME)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.STUDENT_ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.STUDENT_NAME)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PROJECTROLE_NAME)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TIMELOG_TOTALTIME) Minutes
+                </td>
+                <td>
+                    $@Html.DisplayFor(modelItem => item.COST)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UNIT_NAME)
+                </td>
+            </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.TEAM_NAME)
+                </th>
+                <th></th>
+                <th>
+                    @Html.DisplayNameFor(model => model.WEEK_NUMBER)
+                </th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+
+    @section Scripts
+    {
+    <script>
+        var searchValue = document.location.href.split('?').pop();
+        var value = searchValue.split('=').pop();
+        var table = $(document).ready(function () {
+            $('#reportTable .filter-input').each(function () {
+
+                $(this).html('<input class="form-control" type="text" placeholder="Search" />');
+            });
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                $($.fn.dataTable.tables(true)).DataTable()
+                    .columns.adjust()
+                    .fixedColumns().relayout();
+            });
+
+           /* $('#reportTable').on('click', '.group-checkbox', function (e) {
+
+            });*/
+
+            $('#reportTable').DataTable({
+
+                "dom": '<"d-flex justify-content-between"<lfr><B>>rt<"bottom"ip><"clear">',
+                "responsive": true,
+                select: true,
+                "buttons": [
+                    {
+                        extend: 'collection',
+                        text: 'Select',
+                        buttons: [
+                            'selectAll',
+                            'selectNone',
+                            'selectRows'
+                        ]
+                    },
+                    {
+                        extend: 'collection',
+                        text: 'Export',
+                        buttons: [
+                            {
+                                extend: 'pdfHtml5',
+                                text: 'Download PDF',
+                                orientation: 'landscape',
+                                exportOptions: {
+                                    columns: ':visible:not(.not-export-col)'
+                                }
+                            },
+                            {
+                                extend: 'csvHtml5',
+                                text: 'Download CSV',
+                                exportOptions: {
+                                    columns: ':visible:not(.not-export-col)'
+                                }
+                            },
+                            {
+                                extend: 'excelHtml5',
+                                text: 'Download Excel',
+                                exportOptions: {
+                                    columns: ':visible:not(.not-export-col)'
+                                }
+                            },
+
+                            {
+                                extend: 'print',
+                                text: 'Print Report',
+                                exportOptions: {
+                                    columns: ':visible:not(.not-export-col)'
+                                }
+                            }]
+                    },
+                    {
+                        "extend": 'colvis',
+                        "columns": ':not(.notToggleVis)',
+                        "postfixButtons": ['colvisRestore']
+                    }
+
+                ],
+
+                "order": ([[2, 'asc']]),
+
+                rowGroup: {
+                    /*startRender: function (rows, group) {
+                        
+                        rows.every(function (rowIdx, tableLoop, rowLoop) {
+                            var rowData = this.data();
+                            $(this.node()).addClass(group.replace(/[^A-Za-z0-9]/g, ''));
+                        });
+                        return "<input type='checkbox' class='group-checkbox' data-program='" +
+                            group.replace(/[^A-Za-z0-9]/g, '') + "'/>" + group + '(' + rows.count() + ')';
+                    },*/
+                    endRender: function (rows, group) {
+                        var total = rows
+                            .data()
+                            .pluck(8)
+                            .reduce(function (a, b) {
+                                return a + b.replace(/[^\d]/g, '') * 1;
+                            }, 0) / 60;
+                        var totalcost = rows
+                            .data()
+                            .pluck(9)
+                            .reduce(function (a, b) {
+                                return a + b.replace(/[^\d]/g, '') * 1;
+                            }, 0);
+
+                        return group + ' - ' + ' Total Task Time ' + ': ' +
+                            $.fn.dataTable.render.number(',', '.', 0).display(total) + ' Hours' + ' - ' + 'Total Cost: $' + $.fn.dataTable.render.number(',', '.', 0).display(totalcost);
+                    },
+                    dataSrc: 0
+                },
+
+                 "drawCallback": function (settings) {
+                     var api = this.api();
+                     var rows = api.rows({ page: 'current' }).nodes();
+                     var last = null;
+                     table.select.items;
+                     api.column(2, { page: 'current' }).data().each(function (group, i) {
+                         if (last !== group) {
+                             $(rows).eq(i).before(
+                                 '<tr class="group"><td colspan="11">' + 'Week Number: '+ group + '</td></tr>'
+                             );
+
+                             last = group;
+                         }
+                     });
+                 },
+
+                initComplete: function () {
+                    this.api().columns('.filter-select').every(function () {
+                        var column = this;
+                        var select = $('<select class="form-control"><option value=""></option></select>')
+                            .appendTo($(column.footer()).empty())
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d + '">' + d + '</option>')
+                        });
+                    });
+                    this.api().columns().every(function () {
+                        var that = this;
+
+                        $('input', this.footer()).on('keyup change', function () {
+                            if (that.search() !== this.value) {
+                                that
+                                    .search(this.value)
+                                    .draw();
+                            }
+                        });
+
+                    });
+
+                }
+
+
+            });
+
+        });
+    </script>
+    }
